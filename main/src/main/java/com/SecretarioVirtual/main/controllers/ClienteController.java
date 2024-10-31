@@ -2,6 +2,7 @@ package com.SecretarioVirtual.main.controllers;
 
 import com.SecretarioVirtual.main.dtos.cliente.RequestClienteCreacionDto;
 import com.SecretarioVirtual.main.dtos.cliente.ResponseClienteCreacionDto;
+import com.SecretarioVirtual.main.dtos.cliente.ResponseClienteFIndByApellidoDto;
 import com.SecretarioVirtual.main.dtos.cliente.ResponseClienteFindAllDto;
 import com.SecretarioVirtual.main.services.ClienteService;
 import jakarta.validation.Valid;
@@ -20,6 +21,14 @@ public class ClienteController {
     @GetMapping("/findAll-clientes")
     public ResponseEntity<List<ResponseClienteFindAllDto>> findAllCliente(){
         return ResponseEntity.ok(clienteService.findAllCliente());
+    }
+    @GetMapping("findByApellido/{apellido}")
+    ResponseEntity<?> fIndByApellidoCliente(@PathVariable String apellido){
+        ResponseClienteFIndByApellidoDto responseClienteFIndByApellidoDto = clienteService.findByClienteApellido(apellido);
+        if (responseClienteFIndByApellidoDto == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(responseClienteFIndByApellidoDto);
     }
     @PostMapping("/registro-cliente")
     public ResponseEntity<ResponseClienteCreacionDto> createCliente(@RequestBody @Valid RequestClienteCreacionDto requestClienteCreacionDto){
