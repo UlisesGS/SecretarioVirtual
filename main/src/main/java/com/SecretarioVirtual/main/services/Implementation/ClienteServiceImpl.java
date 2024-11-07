@@ -2,6 +2,7 @@ package com.SecretarioVirtual.main.services.Implementation;
 
 import com.SecretarioVirtual.main.dtos.cliente.*;
 import com.SecretarioVirtual.main.entity.Cliente;
+import com.SecretarioVirtual.main.exceptions.ResourceNotFoundException;
 import com.SecretarioVirtual.main.mappers.ClienteMapper;
 import com.SecretarioVirtual.main.repositories.ClienteRepository;
 import com.SecretarioVirtual.main.services.ClienteService;
@@ -28,18 +29,5 @@ public class ClienteServiceImpl implements ClienteService {
         return clienteMapper.clienteToResponseDto(cliente,"Se envio la peticion del registro con exito");
     }
 
-    @Override
-    public List<ResponseClienteFindAllDto> findAllCliente() {
-        List<Cliente>clientes = clienteRepository.findAll();
-        return clienteMapper.clientesResponseFindAllDto(clientes);
-    }
 
-    @Override
-    public ResponseClienteFIndByApellidoDto findByClienteApellido(String apellido) {
-        Optional<Cliente> clienteOptional = clienteRepository.findByApellido(apellido);
-        if(clienteOptional.isPresent()){
-            return clienteMapper.responseDtoClienteFindByApellido(clienteOptional.get());
-        }
-        return null;
-    }
 }
