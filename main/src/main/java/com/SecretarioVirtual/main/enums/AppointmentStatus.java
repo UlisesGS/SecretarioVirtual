@@ -1,0 +1,10 @@
+package com.SecretarioVirtual.main.enums;
+
+public enum AppointmentStatus {
+
+    PENDING,
+    ACCEPTED,
+    DENIED, //APLICA CUANDO ESTA EN PROCESO LA PETICION (RECHAZA)
+    CANCELLED, //APLICA CUANDO FUE ACEPTADA LA PETICION Y LUEGO (SE CANCELA)
+    DONE //CUANDO TERMINA EL TURNO
+}
