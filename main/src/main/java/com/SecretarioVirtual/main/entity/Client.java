@@ -32,6 +32,8 @@ public class Client {
 
     private LocalDate dateOfBirth;
 
+    private String password;
+
     @ManyToMany
     private List<TermsConditions> acceptedTermsConditions;
 
