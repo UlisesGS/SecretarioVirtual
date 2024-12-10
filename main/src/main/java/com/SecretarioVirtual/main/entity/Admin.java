@@ -27,6 +27,8 @@ public class Admin {
     @Email
     private String email;
 
+    private String password;
+
     private Long phone;
 
     @OneToMany
