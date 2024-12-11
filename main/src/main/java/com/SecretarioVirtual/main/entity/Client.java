@@ -5,15 +5,17 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Generated;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Entity(name = "admin")
-public class Admin {
+@Entity(name = "clientes")
+public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -21,16 +23,22 @@ public class Admin {
 
     private String name;
 
-    @Column(name = "last_name")
     private String lastName;
 
     @Email
     private String email;
 
-    private String password;
-
     private Long phone;
 
+    private LocalDate dateOfBirth;
+
+    private String password;
+
+    @ManyToMany
+    private List<TermsConditions> acceptedTermsConditions;
+
     @OneToMany
-    private List<ScheduleRange> scheduleRangeList;
+    private List<Appointment> appointmentList;
+
+    private Boolean enabled;
 }
