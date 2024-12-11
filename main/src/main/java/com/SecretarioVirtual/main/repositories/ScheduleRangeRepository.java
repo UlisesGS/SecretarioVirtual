@@ -1,6 +1,6 @@
 package com.SecretarioVirtual.main.repositories;
 
-import com.SecretarioVirtual.main.entity.ScheduleRange;
+import com.SecretarioVirtual.main.entities.ScheduleRange;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

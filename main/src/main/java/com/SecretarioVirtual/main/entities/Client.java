@@ -1,11 +1,10 @@
-package com.SecretarioVirtual.main.entity;
+package com.SecretarioVirtual.main.entities;
 
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Generated;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
