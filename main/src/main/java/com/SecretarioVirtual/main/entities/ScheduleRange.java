@@ -1,7 +1,6 @@
-package com.SecretarioVirtual.main.entity;
+package com.SecretarioVirtual.main.entities;
 
-
-import com.SecretarioVirtual.main.enums.AppointmentStatus;
+import com.SecretarioVirtual.main.entities.enums.Days;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,19 +14,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Entity(name = "turnos")
-public class Appointment {
-
+@Entity(name = "rangos_horarios")
+public class ScheduleRange {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private String clientId;
+    private Days day;
 
-    private LocalDateTime date;
+    private LocalDateTime startsAt;
 
-    private AppointmentStatus status;
+    private LocalDateTime endsAt;
 
-    private Boolean isPaid;
+    private Integer minutes;
 }

@@ -1,4 +1,4 @@
-package com.SecretarioVirtual.main.enums;
+package com.SecretarioVirtual.main.entities.enums;
 
 public enum AppointmentStatus {
 

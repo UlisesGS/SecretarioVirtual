@@ -1,4 +1,4 @@
-package com.SecretarioVirtual.main.entity;
+package com.SecretarioVirtual.main.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
