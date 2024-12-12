@@ -1,17 +1,16 @@
 package com.SecretarioVirtual.main.services.Implementations;
 
 import com.SecretarioVirtual.main.entities.Appointment;
-import com.SecretarioVirtual.main.entities.dtos.EditAppointmentDto;
-import com.SecretarioVirtual.main.entities.dtos.RequestAppointmentDto;
-import com.SecretarioVirtual.main.entities.dtos.ResponseAppointmentDto;
+import com.SecretarioVirtual.main.entities.dtos.appointment.EditAppointmentDto;
+import com.SecretarioVirtual.main.entities.dtos.appointment.RequestAppointmentDto;
+import com.SecretarioVirtual.main.entities.dtos.appointment.ResponseAppointmentDto;
 import com.SecretarioVirtual.main.exceptions.ResourceNotFoundException;
 import com.SecretarioVirtual.main.mappers.AppointmentMapper;
 import com.SecretarioVirtual.main.repositories.AppointmentRepository;
-import com.SecretarioVirtual.main.repositories.ClientRepository;
+import com.SecretarioVirtual.main.repositories.UserRepository;
 import com.SecretarioVirtual.main.services.AppointmentService;
 import com.SecretarioVirtual.main.utils.DateFormatter;
 import com.SecretarioVirtual.main.validations.Validations;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
     private final AppointmentMapper appointmentMapper;
-    private final ClientRepository clientRepository;
+    private final UserRepository userRepository;
     private final Validations validations;
     private final DateFormatter dateFormatter;
 
@@ -72,7 +71,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     public List<ResponseAppointmentDto> getAppointmentsByPatient(String patientId) {
         //TODO. Self validation + Admin.
         //TODO. Ver de manejar la excepción con el globalHandler.
-        clientRepository.findById(patientId)
+        userRepository.findById(patientId)
                 .orElseThrow(() -> new ResourceNotFoundException("El paciente no fue encontrado"));
         List<Appointment> entities = appointmentRepository.findAllByClientId(patientId);
         return appointmentMapper.appointmentListToResponseDtoList(entities);
@@ -82,7 +81,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     public List<ResponseAppointmentDto> getAppointmentsByPatientAndStatus(String patientId, String status) {
         //TODO. Self validation + Admin.
         //TODO. Ver de manejar la excepción con el globalHandler.
-        clientRepository.findById(patientId)
+        userRepository.findById(patientId)
                 .orElseThrow(() -> new ResourceNotFoundException("El paciente no fue encontrado"));
         var enumStatus = validations.statusConvert(status);
         List<Appointment> entities = appointmentRepository.findAllByClientIdAndStatus(patientId, enumStatus);
@@ -93,7 +92,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     public List<ResponseAppointmentDto> getAppointmentsByPatientAndPaid(String patientId, Boolean paid) {
         //TODO. Self validation + Admin.
         //TODO. Ver de manejar la excepción con el globalHandler.
-        clientRepository.findById(patientId)
+        userRepository.findById(patientId)
                 .orElseThrow(() -> new ResourceNotFoundException("El paciente no fue encontrado"));
         List<Appointment> entities = appointmentRepository.findAllByClientIdAndIsPaid(patientId, paid);
         return appointmentMapper.appointmentListToResponseDtoList(entities);
@@ -103,7 +102,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     public List<ResponseAppointmentDto> getAppointmentsByPatientBetweenDates(String patientId, String fromDate, String toDate) {
         //TODO. Self validation + Admin.
         //TODO. Ver de manejar la excepción con el globalHandler.
-        clientRepository.findById(patientId)
+        userRepository.findById(patientId)
                 .orElseThrow(() -> new ResourceNotFoundException("El paciente no fue encontrado"));
         var ldtDate = dateFormatter.getDateFromString(fromDate, toDate);
         List<Appointment> entities = appointmentRepository.findAllAppointmentsByClientIdAndDateRange(patientId, ldtDate.get(0), ldtDate.get(1));

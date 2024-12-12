@@ -1,5 +1,4 @@
-package com.SecretarioVirtual.main.entities.dtos;
-import com.SecretarioVirtual.main.entities.enums.AppointmentStatus;
+package com.SecretarioVirtual.main.entities.dtos.appointment;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 

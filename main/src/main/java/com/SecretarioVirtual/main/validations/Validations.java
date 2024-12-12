@@ -2,9 +2,14 @@ package com.SecretarioVirtual.main.validations;
 
 import com.SecretarioVirtual.main.entities.enums.AppointmentStatus;
 import com.SecretarioVirtual.main.exceptions.InvalidDataException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+@RequiredArgsConstructor
+@Service
 public class Validations {
     
     //TODO. REQUIERE SECURITY. :D

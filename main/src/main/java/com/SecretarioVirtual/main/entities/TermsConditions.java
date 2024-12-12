@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Entity(name = "terminos_condiciones")
+@Entity
+@Table(name = "terms_conditions")
 public class TermsConditions {
 
     @Id
