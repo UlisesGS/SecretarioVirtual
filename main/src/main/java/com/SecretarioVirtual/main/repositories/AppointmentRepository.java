@@ -17,7 +17,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment,String>
     List<Appointment> findAllByClientIdAndIsPaid(String clientId, Boolean isPaid);
 
     @Query("SELECT a FROM Appointment a WHERE (a.clientId = :clientId)" +
-            "AND a.date >= :startDate AND a.date < :endDate")
+            "AND a.date >= :fromDate AND a.date < :toDate")
     List<Appointment> findAllAppointmentsByClientIdAndDateRange(
             @Param("clientId") String clientId,
             @Param("fromDate") LocalDateTime fromDate,
@@ -27,7 +27,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment,String>
     List<Appointment> findAllByStatus(AppointmentStatus status);
     List<Appointment> findAllByIsPaid(Boolean isPaid);
 
-    @Query("SELECT a FROM Appointment a WHERE a.date >= :startDate AND a.date < :endDate")
+    @Query("SELECT a FROM Appointment a WHERE a.date >= :fromDate AND a.date < :toDate")
     List<Appointment> findAllAppointmentsByDateRange(
             @Param("fromDate") LocalDateTime fromDate,
             @Param("toDate") LocalDateTime toDate);

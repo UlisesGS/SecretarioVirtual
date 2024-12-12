@@ -1,4 +1,4 @@
-package com.SecretarioVirtual.main.entities.dtos;
+package com.SecretarioVirtual.main.entities.dtos.appointment;
 
 import com.SecretarioVirtual.main.entities.enums.AppointmentStatus;
 
