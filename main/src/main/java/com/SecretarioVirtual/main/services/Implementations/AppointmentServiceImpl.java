@@ -5,6 +5,7 @@ import com.SecretarioVirtual.main.entities.dtos.appointment.EditAppointmentDto;
 import com.SecretarioVirtual.main.entities.dtos.appointment.RequestAppointmentDto;
 import com.SecretarioVirtual.main.entities.dtos.appointment.ResponseAppointmentDto;
 import com.SecretarioVirtual.main.exceptions.ResourceNotFoundException;
+import com.SecretarioVirtual.main.exceptions.ValidationException;
 import com.SecretarioVirtual.main.mappers.AppointmentMapper;
 import com.SecretarioVirtual.main.repositories.AppointmentRepository;
 import com.SecretarioVirtual.main.repositories.UserRepository;
@@ -14,6 +15,11 @@ import com.SecretarioVirtual.main.validations.Validations;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -26,11 +32,28 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final Validations validations;
     private final DateFormatter dateFormatter;
 
+    /*
+    1. que la sesión nueva empiece antes que el fin de las que existen && Empiece después del inicio de las que existen.
+    2. que la sesión nueva termine antes que el fin de las que existen && Termine después del inicio de las que existen.
+*/
     @Transactional
     @Override
     public ResponseAppointmentDto createAppointment(RequestAppointmentDto requestAppointmentDto) {
+        String newAppDate = requestAppointmentDto.date().toString();
+        var newDateRange = dateFormatter.getDateFromString(newAppDate);
+        var scheduledAppointments = appointmentRepository.findAllAppointmentsByDateRange(newDateRange.get(0), newDateRange.get(1));
+        for (Appointment appointment : scheduledAppointments){
+            if (requestAppointmentDto.date().isAfter(appointment.getDate())
+                    && requestAppointmentDto.date().isBefore(appointment.getDate().plus(60, ChronoUnit.MINUTES))){
+                throw new ValidationException("El turno se superpone con turnos existentes");
+            }
+            if (requestAppointmentDto.date().plus(60, ChronoUnit.MINUTES).isAfter(appointment.getDate())
+                    && requestAppointmentDto.date().plus(60, ChronoUnit.MINUTES).isBefore(appointment.getDate().plus(60, ChronoUnit.MINUTES))){
+                throw new ValidationException("El turno se superpone con turnos existentes");
+            }
+        }
         var appointment = appointmentMapper.requestDtoToAppointment(requestAppointmentDto);
-        //TODO. Validaciones de fechas antes de guardar la sesión.
+        appointment.setIsPaid(true); //TODO. Pago de la sesión no debe ser siempre true.
         var saved = appointmentRepository.save(appointment);
         var responseDto = appointmentMapper.appointmentToResponseDto(saved);
         return responseDto;
