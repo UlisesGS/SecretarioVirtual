@@ -5,8 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,10 +20,9 @@ public class ScheduleRange {
 
     @Enumerated(EnumType.STRING)
     private Days day;
-
-    private LocalDateTime startsAt;
-
-    private LocalDateTime endsAt;
-
-    private Integer minutes;
+    private LocalTime startsAt;
+    private LocalTime endsAt;
+    private Integer appointmentDuration;
+    private Integer breakTime;
+    private Integer appointmentsAmount;
 }
