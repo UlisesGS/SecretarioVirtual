@@ -34,9 +34,16 @@ public class GlobalExceptionHandler {
     }
 
 
+
     @ExceptionHandler(MailSendingException.class)
     public ResponseEntity<ErrorResponse> handleMailSendingException(MailSendingException ex) {
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
+
+
+    @ExceptionHandler(InvalidUserCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleUserCredentialsException(InvalidUserCredentialsException ex) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
 

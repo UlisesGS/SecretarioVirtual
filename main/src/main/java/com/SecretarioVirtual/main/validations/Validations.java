@@ -1,10 +1,17 @@
 package com.SecretarioVirtual.main.validations;
 
+import com.SecretarioVirtual.main.entities.User;
 import com.SecretarioVirtual.main.entities.enums.AppointmentStatus;
 import com.SecretarioVirtual.main.entities.enums.Days;
+import com.SecretarioVirtual.main.entities.enums.Role;
 import com.SecretarioVirtual.main.exceptions.InvalidDataException;
+import com.SecretarioVirtual.main.exceptions.InvalidUserCredentialsException;
+import com.SecretarioVirtual.main.exceptions.ResourceNotFoundException;
 import com.SecretarioVirtual.main.exceptions.ValidationException;
+import com.SecretarioVirtual.main.repositories.UserRepository;
+import jdk.swing.interop.SwingInterOpUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -14,19 +21,30 @@ import java.time.LocalTime;
 @RequiredArgsConstructor
 @Service
 public class Validations {
-    
-    //TODO. REQUIERE SECURITY. :D
-    /*
-    public boolean selfValidationOrAdmin() {
-    //Corroborar si user id = context holder id.
-        String userNameAuthentication = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        User user = userRepository.findById(userNameAuthentication)
+    private final UserRepository userRepository;
+
+    public boolean selfOrAdminValidation(String userId) {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User userLogged = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        User userGiven = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        if (userId == userLogged.getId() || userLogged.getRole().equals("ADMIN")) {
+            return true;
+        }
+        throw new InvalidUserCredentialsException("El usuario no tiene permiso para esta acción");
+    }
 
-        //Corroborar si user id = ADMIN ID.
-        return new UserAccountPair(user, account);
-    }*/
+    public boolean adminValidation() {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User userLogged = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        if (userLogged.getRole().equals(Role.ADMIN)) {
+            return true;
+        }
+        throw new InvalidUserCredentialsException("El usuario no tiene permiso para esta acción");
+    }
 
     public AppointmentStatus statusConvert(String status) {
         switch (status.toUpperCase()) {
@@ -69,12 +87,16 @@ public class Validations {
     public boolean isSecondDateBefore(LocalDateTime startDate, LocalDateTime endDate) {
         if (endDate.isBefore(startDate)) {
             throw new ValidationException("La fecha de inicio NO puede ser posterior a la de fin.");
-        } else { return true; }
+        } else {
+            return true;
+        }
     }
 
     public boolean isSecondDateBefore(LocalTime startDate, LocalTime endDate) {
         if (endDate.isBefore(startDate)) {
             throw new ValidationException("La fecha de inicio NO puede ser posterior a la de fin.");
-        } else { return true; }
+        } else {
+            return true;
+        }
     }
 }

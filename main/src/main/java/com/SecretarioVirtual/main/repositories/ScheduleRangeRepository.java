@@ -10,4 +10,5 @@ import java.util.List;
 public interface ScheduleRangeRepository extends JpaRepository<ScheduleRange,String> {
 
     List<ScheduleRange> findScheduleRangeByDay(Days day);
+
 }
