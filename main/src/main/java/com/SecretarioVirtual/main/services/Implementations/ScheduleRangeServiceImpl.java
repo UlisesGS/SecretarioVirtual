@@ -1,22 +1,19 @@
 package com.SecretarioVirtual.main.services.Implementations;
 
-import com.SecretarioVirtual.main.entities.Appointment;
 import com.SecretarioVirtual.main.entities.ScheduleRange;
-import com.SecretarioVirtual.main.entities.dtos.appointment.RequestAppointmentDto;
 import com.SecretarioVirtual.main.entities.dtos.scheduleRange.RequestScheduleRangeDto;
 import com.SecretarioVirtual.main.entities.dtos.scheduleRange.ResponseScheduleRangeDto;
+import com.SecretarioVirtual.main.exceptions.ResourceNotFoundException;
 import com.SecretarioVirtual.main.exceptions.ValidationException;
 import com.SecretarioVirtual.main.mappers.ScheduleRangeMapper;
 import com.SecretarioVirtual.main.repositories.ScheduleRangeRepository;
 import com.SecretarioVirtual.main.services.ScheduleRangeService;
-import com.SecretarioVirtual.main.utils.DateFormatter;
 import com.SecretarioVirtual.main.validations.Validations;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -30,8 +27,7 @@ public class ScheduleRangeServiceImpl implements ScheduleRangeService {
     @Transactional
     @Override
     public ResponseScheduleRangeDto createScheduleRange(RequestScheduleRangeDto requestScheduleRangeDto) {
-        //TODO. Validar que sea el admin quien use este método.
-        //Valida que la fecha de inicio sea anterior a la de fin.
+        validations.adminValidation();
         validations.isSecondDateBefore(requestScheduleRangeDto.startsAt(), requestScheduleRangeDto.endsAt());
 
         //Busca día y se fija que no haya otro rango existente que se superponga parcialmente o a fechas inicio/fin.
@@ -49,7 +45,6 @@ public class ScheduleRangeServiceImpl implements ScheduleRangeService {
             }
         }
 
-
         //Calcula la cantidad de turnos dividiendo la duración del rango por la suma del tiempo sesión y recreo.
         Integer appointmentsAmount = (int) (Duration.between(requestScheduleRangeDto.startsAt(), requestScheduleRangeDto.endsAt())).toMinutes()
                 / (requestScheduleRangeDto.appointmentDuration() + requestScheduleRangeDto.breakTime());
@@ -64,5 +59,29 @@ public class ScheduleRangeServiceImpl implements ScheduleRangeService {
         entity.setAppointmentsAmount(appointmentsAmount);
         var saved = scheduleRangeRepository.save(entity);
         return scheduleRangeMapper.scheduleRangeToResponseDto(saved);
+    }
+
+    @Override
+    public List<ResponseScheduleRangeDto> getAllScheduleRanges() {
+        validations.adminValidation();
+        var entities = scheduleRangeRepository.findAll();
+        return scheduleRangeMapper.scheduleRangeListToResponseDtoList(entities);
+    }
+
+    @Override
+    public List<ResponseScheduleRangeDto> getAllScheduleRangesByDay(String day) {
+        validations.adminValidation();
+        var enumDay = validations.dayConvert(day);
+        var entities = scheduleRangeRepository.findScheduleRangeByDay(enumDay);
+        return scheduleRangeMapper.scheduleRangeListToResponseDtoList(entities);
+    }
+
+    @Override
+    public Boolean deleteScheduleRangeId(String id) {
+        validations.adminValidation();
+        var entity = scheduleRangeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el rango horario con el id " + id));
+        scheduleRangeRepository.delete(entity);
+        return null;
     }
 }
