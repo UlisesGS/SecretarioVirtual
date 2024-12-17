@@ -4,11 +4,13 @@ import com.SecretarioVirtual.main.entities.dtos.security.*;
 import jakarta.validation.Valid;
 
 public interface AuthenticationService {
-    ResponseUserNonVerifiedDto signUp(@Valid RequestRegisterDto requestRegisterDto);
+    ResponseUserNonVerifiedDto signUp(String action,@Valid RequestRegisterDto requestRegisterDto);
 
     ResponseLoginDto login(RequestLoginDto requestLoginDto);
 
-    ResponseUserVerifiedDto verifyUser(RequestVerifyUserDto verifyUserDto);
+    ResponseUserVerifiedDto verifyUser(String action,RequestVerifyUserDto verifyUserDto);
 
-    ResponseUserNonVerifiedDto resendVerificationCode(String email);
+    ResponseUserNonVerifiedDto resendVerificationCode(String action,String email);
+
+    String sendVerificationEmail(String action, String mail, String verificationCode);
 }

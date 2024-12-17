@@ -5,7 +5,5 @@ import jakarta.validation.constraints.NotNull;
 
 public record ResponseUpdateMailDto(
 
-        @Email
-        @NotNull(message = "El correo es obligatorio")
         String email
 ) {}

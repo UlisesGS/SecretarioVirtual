@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/registro")
-    public ResponseEntity<ResponseUserNonVerifiedDto> registerUser(@Valid @RequestBody RequestRegisterDto requestRegisterDto) {
-        ResponseUserNonVerifiedDto unverifiedRegisteredUser = authenticationService.signUp(requestRegisterDto);
+    @PostMapping("/registro/{action}")
+    public ResponseEntity<ResponseUserNonVerifiedDto> registerUser(@PathVariable String action,@Valid @RequestBody RequestRegisterDto requestRegisterDto) {
+        ResponseUserNonVerifiedDto unverifiedRegisteredUser = authenticationService.signUp(action,requestRegisterDto);
         return new ResponseEntity<>(unverifiedRegisteredUser, HttpStatus.CREATED);
     }
 
@@ -26,15 +26,22 @@ public class AuthenticationController {
         return ResponseEntity.ok(loginResponse);
     }
 
-    @PostMapping("/verificacion-codigo")
-    public ResponseEntity<ResponseUserVerifiedDto> verifyUser(@RequestBody RequestVerifyUserDto verifyUserDto) {
-        ResponseUserVerifiedDto verifiedRegisteredUser = authenticationService.verifyUser(verifyUserDto);
+    @PostMapping("/verificacion-codigo/{action}")
+    public ResponseEntity<ResponseUserVerifiedDto> verifyUser(@PathVariable String action, @Valid @RequestBody RequestVerifyUserDto verifyUserDto) {
+        ResponseUserVerifiedDto verifiedRegisteredUser = authenticationService.verifyUser(action,verifyUserDto);
         return new ResponseEntity<>(verifiedRegisteredUser, HttpStatus.OK);
     }
 
-    @GetMapping("/reenvio-codigo")
-    public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
-        ResponseUserNonVerifiedDto unverifiedRegisteredUser = authenticationService.resendVerificationCode(email);
+    //revisar si queda abierta de jwt o no
+    @GetMapping("/reenvio-codigo/{action}")
+    public ResponseEntity<?> resendVerificationCode(@PathVariable String action,@RequestParam String email) {
+        ResponseUserNonVerifiedDto unverifiedRegisteredUser = authenticationService.resendVerificationCode(action,email);
         return new ResponseEntity<>(unverifiedRegisteredUser, HttpStatus.OK);
+    }
+
+    @PostMapping("/enviar-codigo/{action}")
+    public ResponseEntity<?> verifyCode(@PathVariable String action, @Valid @RequestBody RequestVerifyUserDto verifyUserDto) {
+        String code = authenticationService.sendVerificationEmail(action,verifyUserDto.email(),verifyUserDto.verificationCode());
+        return new ResponseEntity<>(code, HttpStatus.OK);
     }
 }
