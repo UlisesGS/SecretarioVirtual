@@ -33,9 +33,10 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
-
-
-
+    @ExceptionHandler(InvalidUserCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleUserCredentialsException(InvalidUserCredentialsException ex) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {

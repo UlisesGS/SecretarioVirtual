@@ -12,27 +12,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/appointment")
+@RequestMapping("/api/turno")
 @RequiredArgsConstructor
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
-    @PostMapping("/create")
+    @PostMapping("/crear")
     public ResponseEntity<ResponseAppointmentDto> createAppointment(
             @RequestBody @Valid RequestAppointmentDto requestAppointmentDto) {
         ResponseAppointmentDto result = appointmentService.createAppointment(requestAppointmentDto);
         return ResponseEntity.ok(result);
     }
 
-    @PutMapping("/changeStatus")
+    @PutMapping("/cambiar-estado")
     public ResponseEntity<ResponseAppointmentDto> changeStatusAppointment(
             @RequestBody @Valid EditAppointmentDto editAppointmentDto) {
         ResponseAppointmentDto result = appointmentService.changeStatusAppointment(editAppointmentDto);
         return ResponseEntity.ok(result);
     }
 
-    @PutMapping("/payAppointment")
+    @PutMapping("/pagar")
     public ResponseEntity<ResponseAppointmentDto> payAppointment(
             @RequestBody @Valid EditAppointmentDto editAppointmentDto) {
         ResponseAppointmentDto result = appointmentService.payAppointment(editAppointmentDto);
@@ -45,25 +45,25 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/patient/{patientId}")
+    @GetMapping("/paciente/{patientId}")
     public ResponseEntity<List<ResponseAppointmentDto>> getAppointmentsByPatient(@PathVariable String patientId) {
         List<ResponseAppointmentDto> result = appointmentService.getAppointmentsByPatient(patientId);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/patient/{patientId}/status/{status}")
+    @GetMapping("/paciente/{patientId}/estado/{status}")
     public ResponseEntity<List<ResponseAppointmentDto>> getAppointmentsByPatientAndStatus(@PathVariable String patientId, @PathVariable String status) {
         List<ResponseAppointmentDto> result = appointmentService.getAppointmentsByPatientAndStatus(patientId, status);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/patient/{patientId}/paid/{paid}")
+    @GetMapping("/paciente/{patientId}/pago/{paid}")
     public ResponseEntity<List<ResponseAppointmentDto>> getAppointmentsByPatientAndPaid(@PathVariable String patientId, @PathVariable Boolean paid) {
         List<ResponseAppointmentDto> result = appointmentService.getAppointmentsByPatientAndPaid(patientId, paid);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/patient/{patientId}/between-dates")
+    @GetMapping("/paciente/{patientId}/entre-fechas")
     public ResponseEntity<List<ResponseAppointmentDto>> getAppointmentsByPatientBetweenDates(
             @PathVariable String patientId,
             @RequestParam String fromDate,
@@ -72,31 +72,31 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/todos")
     public ResponseEntity<List<ResponseAppointmentDto>> getAllAppointments() {
         List<ResponseAppointmentDto> result = appointmentService.getAllAppointments();
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/all/status/{status}")
+    @GetMapping("/todos/estado/{status}")
     public ResponseEntity<List<ResponseAppointmentDto>> getAllAppointmentsByStatus(@PathVariable String status) {
         List<ResponseAppointmentDto> result = appointmentService.getAllAppointmentsByStatus(status);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/all/paid/{paid}")
+    @GetMapping("/todos/pago/{paid}")
     public ResponseEntity<List<ResponseAppointmentDto>> getAllAppointmentsByPaid(@PathVariable Boolean paid) {
         List<ResponseAppointmentDto> result = appointmentService.getAllAppointmentsByPaid(paid);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("all/date/{date}")
+    @GetMapping("todos/fecha/{date}")
     public ResponseEntity<List<ResponseAppointmentDto>> getAllAppointmentsByDate(@PathVariable String date) {
         List<ResponseAppointmentDto> result = appointmentService.getAllAppointmentsByDate(date);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/all/between-dates")
+    @GetMapping("/todos/entre-fechas")
     public ResponseEntity<List<ResponseAppointmentDto>> getAllAppointmentsBetweenDates(
             @RequestParam String fromDate,
             @RequestParam String toDate) {
