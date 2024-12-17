@@ -13,7 +13,10 @@ public interface UserMapper {
 
     ResponseUserVerifiedDto userToUserVerifiedDto(User user);
 
+    User updateUserDtoToUser(RequestUpdateUserDto updateUserDto);
+
     ResponseUpdateUserDto userToResponseUpdateUserDto(User user);
+
 
     ResponseUpdateMailDto userToResponseUpdateMailDto(User user);
 }

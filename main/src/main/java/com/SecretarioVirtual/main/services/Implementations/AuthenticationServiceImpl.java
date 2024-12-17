@@ -3,10 +3,7 @@ package com.SecretarioVirtual.main.services.Implementations;
 import com.SecretarioVirtual.main.entities.User;
 import com.SecretarioVirtual.main.entities.dtos.security.*;
 import com.SecretarioVirtual.main.entities.enums.Role;
-import com.SecretarioVirtual.main.exceptions.InvalidDataException;
-import com.SecretarioVirtual.main.exceptions.InvalidUserCredentialsException;
-import com.SecretarioVirtual.main.exceptions.ResourceAlreadyExistsException;
-import com.SecretarioVirtual.main.exceptions.ResourceNotFoundException;
+import com.SecretarioVirtual.main.exceptions.*;
 import com.SecretarioVirtual.main.mappers.UserMapper;
 import com.SecretarioVirtual.main.repositories.UserRepository;
 import com.SecretarioVirtual.main.security.EmailService;
@@ -23,9 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.Optional;
 import java.util.Random;
 
@@ -43,7 +38,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional
-    public ResponseUserNonVerifiedDto signUp(@Valid RequestRegisterDto requestRegisterDto) {
+    public ResponseUserNonVerifiedDto signUp(String action, @Valid RequestRegisterDto requestRegisterDto) {
         if (userRepository.findByEmail(requestRegisterDto.email()).isPresent()) {
             throw new ResourceAlreadyExistsException("Ya hay una cuenta asociada con el email " + requestRegisterDto.email() + ".");
         }
@@ -58,12 +53,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         User user = userMapper.registerUserToUser(requestRegisterDto);
         user.setPassword(passwordEncoder.encode(requestRegisterDto.password()));
-        user.setVerificationCode(generateVerificationCode());
-        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        user.setVerificationCode(generateVerificationCode()); /*ACA*/
+        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));/*ACA*/
         user.setEnabled(false);
         user.setRole(Role.CLIENT);
         user.setCredentialsNonExpired(true);
-        sendVerificationEmail(user);
+        sendVerificationEmail(action, user.getEmail(), user.getVerificationCode());
         User savedUser = userRepository.save(user);
 
         return userMapper.userToUserNonVerifiedDto(savedUser);
@@ -95,7 +90,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
 
-    public ResponseUserVerifiedDto verifyUser(RequestVerifyUserDto verifyUserDto) {
+    public ResponseUserVerifiedDto verifyUser(String action,RequestVerifyUserDto verifyUserDto) {
         Optional<User> optionalUser = userRepository.findByEmail(verifyUserDto.email());
 
         if (optionalUser.isEmpty()) {
@@ -125,7 +120,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
 
-    public ResponseUserNonVerifiedDto resendVerificationCode(String email) {
+    public ResponseUserNonVerifiedDto resendVerificationCode(String action,String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {
@@ -140,36 +135,63 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
-        sendVerificationEmail(user);
+        sendVerificationEmail(action, user.getEmail(), user.getVerificationCode()); // REVISAR
         User savedUser = userRepository.save(user);
 
         return userMapper.userToUserNonVerifiedDto(savedUser);
     }
 
 
-    private void sendVerificationEmail(User user) {
-        String subject = "Verificación de cuenta";
-        String verificationCode = user.getVerificationCode();
-        String htmlMessage = "<html>"
-                + "<body style=\"font-family: Arial, sans-serif;\">"
-                + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
-                + "<h2 style=\"color: #333;\">¡Bienvenido a Secretario Virtual!</h2>"
-                + "<p style=\"font-size: 16px;\">Por favor ingresa el siguiente código debajo para continuar:</p>"
-                + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
-                + "<h3 style=\"color: #333;\">Código de Verificación:</h3>"
-                + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
-                + "</div>"
-                + "</div>"
-                + "</body>"
-                + "</html>";
-
+    @Override
+    @Transactional
+    public String sendVerificationEmail(String action,String mail, String verificationCode ) {
+        String subject = "";
+        String htmlMessage = "";
+        User user = userRepository.findByEmail(mail).orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
+        switch (action) {
+            case "verificacion-mail":
+                subject = "Verificación de cuenta";
+                //String verificationCode = user.getVerificationCode();
+                htmlMessage = "<html>"
+                        + "<body style=\"font-family: Arial, sans-serif;\">"
+                        + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
+                        + "<h2 style=\"color: #333;\">¡Bienvenido a Secretario Virtual!</h2>"
+                        + "<p style=\"font-size: 16px;\">Por favor ingresa el siguiente código debajo para continuar:</p>"
+                        + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
+                        + "<h3 style=\"color: #333;\">Código de Verificación:</h3>"
+                        + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
+                        + "</div>"
+                        + "</div>"
+                        + "</body>"
+                        + "</html>";
+                break;
+            case "modificar-mail":
+                subject = "Modificacion de mail";
+                verificationCode=this.generateVerificationCode();
+                user.setVerificationCode(verificationCode); /*ACA*/
+                user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15)); /*ACA*/
+                userRepository.save(user);
+                htmlMessage = "<html>"
+                        + "<body style=\"font-family: Arial, sans-serif;\">"
+                        + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
+                        + "<h2 style=\"color: #333;\">¡Secretario Virtual! Cambio de mail</h2>"
+                        + "<p style=\"font-size: 16px;\">Por favor ingresa el siguiente código debajo para continuar:</p>"
+                        + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
+                        + "<h3 style=\"color: #333;\">Código de Verificación:</h3>"
+                        + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
+                        + "</div>"
+                        + "</div>"
+                        + "</body>"
+                        + "</html>";
+                break;
+        }
         try {
             emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
+            return user.getVerificationCode();
         } catch (MessagingException e) {
-            e.printStackTrace();
+            throw new MailSendingException("Error para enviar el mail.");
         }
     }
-
 
     private String generateVerificationCode() {
         Random random = new Random();
