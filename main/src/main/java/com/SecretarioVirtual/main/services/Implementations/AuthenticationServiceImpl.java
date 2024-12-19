@@ -58,9 +58,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setEnabled(false);
         user.setRole(Role.CLIENT);
         user.setCredentialsNonExpired(true);
+        // guardar antes ¿? User savedUser = userRepository.save(user);
+
         sendVerificationEmail(action, user.getEmail(), user.getVerificationCode());
         User savedUser = userRepository.save(user);
-
         return userMapper.userToUserNonVerifiedDto(savedUser);
     }
 
@@ -147,9 +148,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public String sendVerificationEmail(String action,String mail, String verificationCode ) {
         String subject = "";
         String htmlMessage = "";
-        User user = userRepository.findByEmail(mail).orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
         switch (action) {
-            case "verificacion-mail":
+            case "codigo-registro":
                 subject = "Verificación de cuenta";
                 //String verificationCode = user.getVerificationCode();
                 htmlMessage = "<html>"
@@ -165,8 +165,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         + "</body>"
                         + "</html>";
                 break;
-            case "modificar-mail":
+            case "codigo-modificar-mail":
                 subject = "Modificacion de mail";
+                User user = userRepository.findByEmail(mail).orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
                 verificationCode=this.generateVerificationCode();
                 user.setVerificationCode(verificationCode); /*ACA*/
                 user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15)); /*ACA*/
@@ -186,8 +187,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 break;
         }
         try {
-            emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
-            return user.getVerificationCode();
+            emailService.sendVerificationEmail(mail, subject, htmlMessage);
+            return verificationCode;
         } catch (MessagingException e) {
             throw new MailSendingException("Error para enviar el mail.");
         }

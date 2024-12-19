@@ -13,6 +13,16 @@ import java.util.stream.Collectors;
 @RestControllerAdvice //AGREGAR TODAS LAS EXCEPTION
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(InvalidJwtException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidJwtException(InvalidJwtException ex) {
+        return buildErrorResponse(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+
     @ExceptionHandler(InvalidDataException.class)
     public ResponseEntity<ErrorResponse> handleInvalidDataException(InvalidDataException ex) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
