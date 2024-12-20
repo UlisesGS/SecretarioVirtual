@@ -1,13 +1,11 @@
 package com.SecretarioVirtual.main.entities;
-
-
 import com.SecretarioVirtual.main.entities.enums.AppointmentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,7 +18,8 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String clientId;
-    private LocalDateTime date;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;

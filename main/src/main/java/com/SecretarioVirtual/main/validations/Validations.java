@@ -28,7 +28,7 @@ public class Validations {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
         User userGiven = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-        if (userId == userLogged.getId() || userLogged.getRole().equals("ADMIN")) {
+        if (userId == userLogged.getId() || userLogged.getRole().equals(Role.ADMIN)) {
             return true;
         }
         throw new InvalidUserCredentialsException("El usuario no tiene permiso para esta acción");
@@ -82,8 +82,8 @@ public class Validations {
         }
     }
 
-    public boolean isSecondDateBefore(LocalDateTime startDate, LocalDateTime endDate) {
-        if (endDate.isBefore(startDate)) {
+    public boolean isSecondDateAfter(LocalDateTime startDate, LocalDateTime endDate) {
+        if (startDate.isAfter(endDate)) {
             throw new ValidationException("La fecha de inicio NO puede ser posterior a la de fin.");
         } else {
             return true;

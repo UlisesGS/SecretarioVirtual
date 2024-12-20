@@ -63,11 +63,11 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/paciente/{patientId}/entre-fechas")
+    @GetMapping("/paciente/{patientId}/{fromDate}/{toDate}")
     public ResponseEntity<List<ResponseAppointmentDto>> getAppointmentsByPatientBetweenDates(
             @PathVariable String patientId,
-            @RequestParam String fromDate,
-            @RequestParam String toDate) {
+            @PathVariable String fromDate,
+            @PathVariable String toDate) {
         List<ResponseAppointmentDto> result = appointmentService.getAppointmentsByPatientBetweenDates(patientId, fromDate, toDate);
         return ResponseEntity.ok(result);
     }
@@ -96,10 +96,10 @@ public class AppointmentController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/todos/entre-fechas")
+    @GetMapping("/todos/{fromDate}/{toDate}")
     public ResponseEntity<List<ResponseAppointmentDto>> getAllAppointmentsBetweenDates(
-            @RequestParam String fromDate,
-            @RequestParam String toDate) {
+            @PathVariable String fromDate,
+            @PathVariable String toDate) {
         List<ResponseAppointmentDto> result = appointmentService.getAllAppointmentsBetweenDates(fromDate, toDate);
         return ResponseEntity.ok(result);
     }
