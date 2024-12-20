@@ -9,10 +9,8 @@ import com.SecretarioVirtual.main.exceptions.InvalidUserCredentialsException;
 import com.SecretarioVirtual.main.exceptions.ResourceNotFoundException;
 import com.SecretarioVirtual.main.exceptions.ValidationException;
 import com.SecretarioVirtual.main.repositories.UserRepository;
-import jdk.swing.interop.SwingInterOpUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
