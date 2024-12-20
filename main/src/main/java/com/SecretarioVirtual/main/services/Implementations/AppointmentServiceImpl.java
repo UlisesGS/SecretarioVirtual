@@ -37,21 +37,23 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public ResponseAppointmentDto createAppointment(RequestAppointmentDto requestAppointmentDto) {
         validations.selfOrAdminValidation(requestAppointmentDto.clientId());
-        String newAppDate = requestAppointmentDto.date().toString();
+        String newAppDate = requestAppointmentDto.startDate().toLocalDate().toString();
         var newDateRange = dateFormatter.getDateFromString(newAppDate);
         var scheduledAppointments = appointmentRepository.findAllAppointmentsByDateRange(newDateRange.get(0), newDateRange.get(1));
-        for (Appointment appointment : scheduledAppointments) {
-            if (requestAppointmentDto.date().isAfter(appointment.getDate())
-                    && requestAppointmentDto.date().isBefore(appointment.getDate().plus(60, ChronoUnit.MINUTES))) {
-                throw new ValidationException("El turno se superpone con turnos existentes");
-            }
-            if (requestAppointmentDto.date().plus(60, ChronoUnit.MINUTES).isAfter(appointment.getDate())
-                    && requestAppointmentDto.date().plus(60, ChronoUnit.MINUTES).isBefore(appointment.getDate().plus(60, ChronoUnit.MINUTES))) {
-                throw new ValidationException("El turno se superpone con turnos existentes");
+        for (Appointment existent : scheduledAppointments) {
+            if ((requestAppointmentDto.startDate().isAfter(existent.getStartDate())
+                    && requestAppointmentDto.startDate().isBefore(existent.getEndDate())) ||
+                    (requestAppointmentDto.endDate().isAfter(existent.getStartDate())
+                            && requestAppointmentDto.endDate().isBefore(existent.getEndDate())) ||
+                    (requestAppointmentDto.endDate().isAfter(existent.getEndDate())
+                            && requestAppointmentDto.startDate().isBefore(existent.getStartDate())) ||
+                    (requestAppointmentDto.startDate().equals(existent.getStartDate())) ||
+                    (requestAppointmentDto.endDate().equals(existent.getEndDate()))) {
+                throw new ValidationException("El turno se superpone con otro turno existente");
             }
         }
         var appointment = appointmentMapper.requestDtoToAppointment(requestAppointmentDto);
-        appointment.setIsPaid(true); //TODO. Pago de la sesión no debe ser siempre true.
+        //TODO. Pago de la sesión no debe ser siempre true.
         var saved = appointmentRepository.save(appointment);
         var responseDto = appointmentMapper.appointmentToResponseDto(saved);
         return responseDto;

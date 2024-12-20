@@ -5,6 +5,7 @@ import com.SecretarioVirtual.main.exceptions.ValidationException;
 import com.SecretarioVirtual.main.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,9 +18,9 @@ public class DateFormatter {
 
     private final Validations validations;
 
-    public List<LocalDateTime> getDateFromString(String date){
+    public List<LocalDateTime> getDateFromString(String date) {
         List<LocalDateTime> transactionDate = new ArrayList<>();
-        try{
+        try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate formattedDate = LocalDate.parse(date, formatter);
             LocalDateTime startDate = formattedDate.atStartOfDay();
@@ -28,13 +29,13 @@ public class DateFormatter {
             transactionDate.add(endDate);
 
             return transactionDate;
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new InvalidDateFormatException("Formato de fecha erroneo. Debe ingresar yyyy-MM-dd");
         }
 
     }
 
-    public List<LocalDateTime> getDateFromString(String fromDate, String toDate){
+    public List<LocalDateTime> getDateFromString(String fromDate, String toDate) {
         List<LocalDateTime> transactionDate = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime startDate;
@@ -45,16 +46,13 @@ public class DateFormatter {
             startDate = formattedFromDate.atStartOfDay();
             LocalDate formattedToDate = LocalDate.parse(toDate, formatter);
             endDate = formattedToDate.plusDays(1).atStartOfDay();
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new InvalidDateFormatException("Formato de fecha erroneo. Debe ingresar yyyy-MM-dd");
         }
-
-        if(validations.isSecondDateBefore(startDate, endDate)){
-            throw new ValidationException("La fecha final no puede ser menor a la inicial.");
+        if (validations.isSecondDateAfter(startDate, endDate)) {
+            transactionDate.add(startDate);
+            transactionDate.add(endDate);
         }
-        transactionDate.add(startDate);
-        transactionDate.add(endDate);
-
         return transactionDate;
     }
 }
