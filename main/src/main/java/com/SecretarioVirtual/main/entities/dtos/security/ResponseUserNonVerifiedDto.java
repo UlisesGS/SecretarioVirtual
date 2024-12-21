@@ -7,7 +7,7 @@ public record ResponseUserNonVerifiedDto(
         String name,
         String lastName,
         String email,
-        Long phone,
+        String phone,
         LocalDate dateOfBirth,
         String verificationCode
 ) {

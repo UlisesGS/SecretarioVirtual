@@ -130,7 +130,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         User user = optionalUser.get();
 
-        if (user.isEnabled()) {
+        if (action.equals("codigo-registro") && user.getEnabled()) {
             throw new InvalidDataException("La cuenta ya se encuentra verificada.");
         }
 
@@ -151,7 +151,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         switch (action) {
             case "codigo-registro":
                 subject = "Verificación de cuenta";
-                //String verificationCode = user.getVerificationCode();
                 htmlMessage = "<html>"
                         + "<body style=\"font-family: Arial, sans-serif;\">"
                         + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
@@ -167,11 +166,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 break;
             case "codigo-modificar-mail":
                 subject = "Modificacion de mail";
-                User user = userRepository.findByEmail(mail).orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
-                verificationCode=this.generateVerificationCode();
-                user.setVerificationCode(verificationCode); /*ACA*/
-                user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15)); /*ACA*/
-                userRepository.save(user);
+                verificationCode = prepareUserVerificationCode(mail);
                 htmlMessage = "<html>"
                         + "<body style=\"font-family: Arial, sans-serif;\">"
                         + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
@@ -185,6 +180,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         + "</body>"
                         + "</html>";
                 break;
+            case "codigo-modificar-contraseña":
+                subject = "Modificacion de contraseña";
+                verificationCode = prepareUserVerificationCode(mail);
+                htmlMessage = "<html>"
+                        + "<body style=\"font-family: Arial, sans-serif;\">"
+                        + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
+                        + "<h2 style=\"color: #333;\">¡Secretario Virtual! Cambio de mail</h2>"
+                        + "<p style=\"font-size: 16px;\">Por favor ingresa el siguiente código debajo para continuar:</p>"
+                        + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
+                        + "<h3 style=\"color: #333;\">Código de Verificación:</h3>"
+                        + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
+                        + "</div>"
+                        + "</div>"
+                        + "</body>"
+                        + "</html>";
+                break;
+            default:
+                 throw new InvalidDataException("Action de envio de codigo incorrecto.");
         }
         try {
             emailService.sendVerificationEmail(mail, subject, htmlMessage);
@@ -193,6 +206,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new MailSendingException("Error para enviar el mail.");
         }
     }
+
+
+    private String prepareUserVerificationCode(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
+        String verificationCode = this.generateVerificationCode();
+        user.setVerificationCode(verificationCode);
+        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        userRepository.save(user);
+        return verificationCode;
+    }
+
 
     private String generateVerificationCode() {
         Random random = new Random();

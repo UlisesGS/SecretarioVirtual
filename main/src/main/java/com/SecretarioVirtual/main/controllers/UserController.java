@@ -5,6 +5,7 @@ import com.SecretarioVirtual.main.entities.dtos.security.RequestUpdateUserDto;
 import com.SecretarioVirtual.main.entities.dtos.security.ResponseUpdateMailDto;
 import com.SecretarioVirtual.main.entities.dtos.security.ResponseUpdateUserDto;
 import com.SecretarioVirtual.main.entities.dtos.security.User.RequestEmailUserDto;
+import com.SecretarioVirtual.main.entities.dtos.security.User.RequestPasswordUpdateUserDto;
 import com.SecretarioVirtual.main.entities.dtos.security.User.ResponseUserDto;
 import com.SecretarioVirtual.main.services.UserService;
 import jakarta.validation.Valid;
@@ -38,6 +39,13 @@ public class UserController {
     public ResponseEntity<ResponseUpdateUserDto> updateUser(@Valid @RequestBody RequestUpdateUserDto requestUpdateUserDto){
         ResponseUpdateUserDto responseUpdateUserDto = userService.updateUser(requestUpdateUserDto);
         return ResponseEntity.ok(responseUpdateUserDto);
+    }
+
+
+    @PutMapping("editar-contraseña")
+    public ResponseEntity<?> updatePassword(@Valid @RequestBody RequestPasswordUpdateUserDto requestPasswordUpdateUserDto){
+        userService.updatePassword(requestPasswordUpdateUserDto);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
 

@@ -9,7 +9,7 @@ public record RequestUpdateMailDto(
         String email,
         @Email
         @NotNull(message = "El correo es obligatorio")
-        String emailNuevo,
+        String newEmail,
         @NotNull(message = "El codigo de verificacion no puede ser nulo")
         String verificationCode
 ) {}
