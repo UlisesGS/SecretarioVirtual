@@ -3,7 +3,7 @@ package com.SecretarioVirtual.main.entities.dtos.security;
 import java.time.LocalDate;
 
 public record ResponseUpdateUserDto(
-        Long phone,
+        String phone,
 
         String name,
 

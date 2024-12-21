@@ -34,6 +34,20 @@ public class Validations {
         throw new InvalidUserCredentialsException("El usuario no tiene permiso para esta acción");
     }
 
+
+    public boolean selfOrAdminValidationEmail(String userEmail) {
+        String userEmailSecurity = SecurityContextHolder.getContext().getAuthentication().getName();
+        User userLogged = userRepository.findByEmail(userEmailSecurity)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        User userGiven = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        if (userGiven.getId() == userLogged.getId() || userLogged.getRole().equals(Role.ADMIN)) {
+            return true;
+        }
+        throw new InvalidUserCredentialsException("El usuario no tiene permiso para esta acción");
+    }
+
+
     public boolean adminValidation() {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User userLogged = userRepository.findByEmail(userEmail)

@@ -32,7 +32,7 @@ public class User implements UserDetails {
 
     private String email;
 
-    private Long phone;
+    private String phone;
 
     private LocalDate dateOfBirth;
 
