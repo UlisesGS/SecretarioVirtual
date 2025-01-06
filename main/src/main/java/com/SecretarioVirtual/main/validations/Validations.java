@@ -28,7 +28,7 @@ public class Validations {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
         User userGiven = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-        if (userId == userLogged.getId() || userLogged.getRole().equals(Role.ADMIN)) {
+        if (userId.equals(userLogged.getId()) || userLogged.getRole().equals(Role.ADMIN)) {
             return true;
         }
         throw new InvalidUserCredentialsException("El usuario no tiene permiso para esta acción");

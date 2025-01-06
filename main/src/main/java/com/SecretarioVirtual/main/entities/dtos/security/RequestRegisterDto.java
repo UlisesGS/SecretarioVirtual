@@ -1,6 +1,7 @@
 package com.SecretarioVirtual.main.entities.dtos.security;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
