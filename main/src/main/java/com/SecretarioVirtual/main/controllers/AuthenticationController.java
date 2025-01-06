@@ -34,10 +34,18 @@ public class AuthenticationController {
 
     //revisar si queda abierta de jwt o no
     @GetMapping("/reenvio-codigo/{action}")
-    public ResponseEntity<?> resendVerificationCode(@PathVariable String action,@RequestParam String email) {
+    public ResponseEntity<?> resendVerificationCode(@PathVariable String action, @RequestParam String email) {
         ResponseUserNonVerifiedDto unverifiedRegisteredUser = authenticationService.resendVerificationCode(action,email);
         return new ResponseEntity<>(unverifiedRegisteredUser, HttpStatus.OK);
     }
+
+
+    @GetMapping("/modificar/reenvio-codigo/{action}")
+    public ResponseEntity<?> resendVerificationCodeEdit(@PathVariable String action, @RequestParam String email) {
+        ResponseUserNonVerifiedDto unverifiedRegisteredUser = authenticationService.resendVerificationCode(action,email);
+        return new ResponseEntity<>(unverifiedRegisteredUser, HttpStatus.OK);
+    }
+
 
     @PostMapping("/enviar-codigo/{action}")
     public ResponseEntity<?> verifyCode(@PathVariable String action, @Valid @RequestBody RequestVerifyUserDto verifyUserDto) {

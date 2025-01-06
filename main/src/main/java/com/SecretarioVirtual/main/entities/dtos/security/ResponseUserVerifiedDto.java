@@ -7,7 +7,7 @@ public record ResponseUserVerifiedDto(
         String name,
         String lastName,
         String email,
-        Long phone,
+        String phone,
         LocalDate dateOfBirth
 ) {
 }

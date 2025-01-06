@@ -25,7 +25,8 @@ public record RequestRegisterDto(
         String password,
 
         @NotNull(message = "El teléfono es obligatorio y no puede estar vacío.")
-        Long phone,
+        @Pattern(regexp = "^[0-9]+$", message = "El teléfono solo debe contener números.")
+        String phone,
 
         @NotNull(message = "La fecha de nacimiento es obligatoria.")
         @JsonFormat(pattern="yyyy-MM-dd")

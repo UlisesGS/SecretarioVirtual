@@ -13,7 +13,8 @@ public record RequestUpdateUserDto(
         @Pattern(regexp = "^[a-zA-ZÀ-ÿ\\s]+$", message = "El apellido solo debe contener letras.")
         String lastName,
         @NotNull(message = "El teléfono es obligatorio y no puede estar vacío.")
-        Long phone,
+        @Pattern(regexp = "^[0-9]+$", message = "El teléfono solo debe contener números.")
+        String phone,
         @Email
         @NotNull(message = "El correo es obligatorio")
         String email,
