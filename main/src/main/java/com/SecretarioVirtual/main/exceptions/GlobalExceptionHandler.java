@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidUserCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleUserCredentialsException(InvalidUserCredentialsException ex) {
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
 
