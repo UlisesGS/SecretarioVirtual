@@ -10,6 +10,7 @@ import com.SecretarioVirtual.main.security.EmailService;
 import com.SecretarioVirtual.main.security.JwtService;
 import com.SecretarioVirtual.main.services.AuthenticationService;
 import com.SecretarioVirtual.main.services.UserService;
+import com.SecretarioVirtual.main.validations.Validations;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -35,6 +36,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final EmailService emailService;
+    private final Validations validations;
 
     @Override
     @Transactional
@@ -209,6 +211,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     private String prepareUserVerificationCode(String email) {
+        validations.selfOrAdminValidationEmail(email);
         User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
         String verificationCode = this.generateVerificationCode();
         user.setVerificationCode(verificationCode);

@@ -9,6 +9,7 @@ import com.SecretarioVirtual.main.entities.dtos.security.User.RequestEmailUserDt
 import com.SecretarioVirtual.main.entities.dtos.security.User.RequestPasswordUpdateUserDto;
 import com.SecretarioVirtual.main.entities.dtos.security.User.ResponseUserDto;
 import com.SecretarioVirtual.main.exceptions.InvalidDataException;
+import com.SecretarioVirtual.main.exceptions.ResourceAlreadyExistsException;
 import com.SecretarioVirtual.main.exceptions.ResourceNotFoundException;
 import com.SecretarioVirtual.main.mappers.UserMapper;
 import com.SecretarioVirtual.main.repositories.UserRepository;
@@ -56,10 +57,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ResponseUpdateUserDto updateUser(RequestUpdateUserDto requestUpdateUserDto) {
+        validations.selfOrAdminValidationEmail(requestUpdateUserDto.email());
+
         User user = userRepository.findByEmail(requestUpdateUserDto.email()).orElseThrow(() ->
                 new ResourceNotFoundException("El usuario no fue encontrado"));
 
         User userDto = userMapper.updateUserDtoToUser(requestUpdateUserDto);
+
+        if (userRepository.findByPhone(userDto.getPhone()).isPresent()) {
+            throw new ResourceAlreadyExistsException("Ya hay una cuenta asociada con el numero de celular " + userDto.getPhone() + ".");
+        }
 
         if(user.getName().equals(userDto.getName()) &&
             user.getLastName().equals(userDto.getLastName()) &&
@@ -80,11 +87,17 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ResponseUpdateMailDto updateMail(RequestUpdateMailDto requestUpdateMailDto) {
+        validations.selfOrAdminValidationEmail(requestUpdateMailDto.email());
+
         User user = userRepository.findByEmail(requestUpdateMailDto.email())
                 .orElseThrow(() -> new ResourceNotFoundException("El usuario no fue encontrado"));
 
         if (user.getVerificationCode()==null){
             throw new InvalidDataException("Accion incorrecta.");
+        }
+
+        if (userRepository.findByEmail(requestUpdateMailDto.newEmail()).isPresent()) {
+            throw new ResourceAlreadyExistsException("Ya hay una cuenta asociada con el email " + requestUpdateMailDto.newEmail() + ".");
         }
 
         if (user.getEmail().equals(requestUpdateMailDto.newEmail())) {
