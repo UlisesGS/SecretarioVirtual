@@ -68,7 +68,6 @@ public class ScheduleRangeControllerTest {
                     .andExpect(jsonPath("$.appointmentDuration", Matchers.is(responseScheduleRangeDto.appointmentDuration())))
                     .andExpect(jsonPath("$.breakTime", Matchers.is(responseScheduleRangeDto.breakTime())));
         }
-
         @Test
         public void create_schedule_range_should_NOT_be_ok_due_to_invalid_credentials() throws Exception {
             var requestScheduleRangeDto = new RequestScheduleRangeDto(Days.MONDAY,
@@ -86,7 +85,6 @@ public class ScheduleRangeControllerTest {
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.message", Matchers.is("El usuario no tiene permiso para esta acción")));
         }
-
         @Test
         public void create_schedule_range_should_NOT_be_ok_due_to_wrong_date() throws Exception {
             var requestScheduleRangeDto = new RequestScheduleRangeDto(Days.MONDAY,
@@ -115,7 +113,7 @@ public class ScheduleRangeControllerTest {
                     45, 5, 9);
             mapper.registerModule(new JavaTimeModule());
             when(scheduleRangeService.getAllScheduleRanges()).thenReturn(List.of(responseScheduleRangeDto));
-            mockMvc.perform(get("/api/horario/todos/dia/MONDAY"))
+            mockMvc.perform(get("/api/horario/todos"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", Matchers.hasSize(1)))
                     .andExpect(jsonPath("$[0].day", Matchers.is(responseScheduleRangeDto.day().name())))
