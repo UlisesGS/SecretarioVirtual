@@ -106,6 +106,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- Tests unitarios con LocalTime -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>2.15.2</version>
+		</dependency>
+
 		<!-- THYMELEAF & STARTER MAIL -> Validations to mail & Remember appointments -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
