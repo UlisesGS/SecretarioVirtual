@@ -72,7 +72,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public ResponseLoginDto login(RequestLoginDto requestLoginDto) {
         User user = userRepository.findByEmail(requestLoginDto.email()).orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
 
-        if (!user.isEnabled()) {
+        if (!user.getEnabled()) {
+            System.out.println("exception lanzada");
             throw new InvalidUserCredentialsException("Cuenta no verificada. Por favor verifique su cuenta.");
         }
         try {
@@ -221,7 +222,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
 
-    private String generateVerificationCode() {
+    protected String generateVerificationCode() {
         Random random = new Random();
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
