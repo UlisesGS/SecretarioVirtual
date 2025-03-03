@@ -31,7 +31,7 @@ public class ScheduleRangeController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("todos/dia/{day}")
+    @GetMapping("/todos/dia/{day}")
     public ResponseEntity<List<ResponseScheduleRangeDto>> getAllScheduleRangesByDay(@PathVariable String day) {
         List<ResponseScheduleRangeDto> result = scheduleRangeService.getAllScheduleRangesByDay(day);
         return ResponseEntity.ok(result);
