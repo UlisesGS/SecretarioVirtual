@@ -96,13 +96,14 @@ public class UserServiceImpl implements UserService {
             throw new InvalidDataException("Accion incorrecta.");
         }
 
+        if (user.getEmail().equals(requestUpdateMailDto.newEmail())) {
+            throw new InvalidDataException("El nuevo correo electrónico es igual al actual.");
+        }
+
         if (userRepository.findByEmail(requestUpdateMailDto.newEmail()).isPresent()) {
             throw new ResourceAlreadyExistsException("Ya hay una cuenta asociada con el email " + requestUpdateMailDto.newEmail() + ".");
         }
 
-        if (user.getEmail().equals(requestUpdateMailDto.newEmail())) {
-            throw new InvalidDataException("El nuevo correo electrónico es igual al actual.");
-        }
 
         if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
             throw new InvalidDataException("Código de verificació" +
