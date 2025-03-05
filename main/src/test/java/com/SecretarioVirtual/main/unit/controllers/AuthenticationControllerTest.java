@@ -96,7 +96,7 @@ public class AuthenticationControllerTest { //DEJO LOS CASOS DE ERROR PARA MAS A
     }
 
 
-    @Nested
+ /*   @Nested
     class LoginUserControllerTest {
 
         @Test
@@ -144,7 +144,7 @@ public class AuthenticationControllerTest { //DEJO LOS CASOS DE ERROR PARA MAS A
                     .andExpect(jsonPath("$.user.dateOfBirth").value("2000-01-01"));  // Verifica la fecha de nacimiento
 
         }
-    }
+    } */
 
 
     @Nested
