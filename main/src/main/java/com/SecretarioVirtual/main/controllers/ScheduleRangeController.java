@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/horario")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 public class ScheduleRangeController {
 
